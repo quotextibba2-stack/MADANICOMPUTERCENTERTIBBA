@@ -1,0 +1,3062 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Madani Computer Center</title>
+    
+    <!-- PWA Support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#6366f1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Madani">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Nastaliq+Urdu:wght@400;700&family=Inter:wght@300;400;500;600;700;800&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
+            --shadow-md: 0 4px 16px rgba(0,0,0,0.08);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Nastaliq Urdu', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 0;
+            color: var(--dark);
+        }
+
+        .app-container {
+            max-width: 480px;
+            margin: 0 auto;
+            background: var(--light);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 40px rgba(0,0,0,0.3);
+        }
+
+        .top-bar {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: var(--shadow-md);
+        }
+
+        .top-bar h1 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-align: center;
+        }
+
+        .top-bar p {
+            font-size: 12px;
+            opacity: 0.9;
+            text-align: center;
+        }
+
+        .main-content {
+            padding: 20px;
+            padding-bottom: 90px;
+        }
+
+        .tab-nav {
+            background: white;
+            border-radius: 16px;
+            padding: 8px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+            gap: 8px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 8px;
+            border: none;
+            background: transparent;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 11px;
+            font-weight: 500;
+            color: #64748b;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow-sm);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-card .stat-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+            opacity: 0.8;
+        }
+
+        .stat-card .stat-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .stat-card .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: #475569;
+            margin-bottom: 8px;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.3s;
+            background: var(--light);
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: var(--light);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .checkbox-group:hover {
+            background: #e0e7ff;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--primary);
+        }
+
+        .checkbox-label {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .checkbox-amount {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+        }
+
+        .btn-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        .selected-row {
+            background: #dbeafe !important;
+        }
+
+        .action-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 11px;
+            cursor: pointer;
+            margin-right: 4px;
+            transition: all 0.2s;
+        }
+
+        .action-btn-edit {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .action-btn-delete {
+            background: #ef4444;
+            color: white;
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .status-process {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .status-completed {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 480px;
+            width: 100%;
+            background: white;
+            padding: 12px 20px;
+            box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-around;
+            z-index: 100;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 12px;
+            transition: all 0.3s;
+            flex: 1;
+            text-align: center;
+        }
+
+        .nav-item i {
+            font-size: 20px;
+            color: #64748b;
+        }
+
+        .nav-item span {
+            font-size: 10px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .nav-item.active i,
+        .nav-item.active span {
+            color: var(--primary);
+        }
+
+        .nav-item.active {
+            background: #f1f5f9;
+        }
+
+        #toast-container {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .toast {
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            animation: slideDown 0.3s;
+            border-left: 4px solid var(--success);
+        }
+
+        .toast-error {
+            border-left-color: var(--danger);
+        }
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .loader-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .loading-text-container {
+            display: flex;
+            gap: 10px;
+            font-size: 50px;
+            font-weight: 800;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .loading-text-container span {
+            color: white;
+            animation: wave 1.5s ease-in-out infinite;
+            display: inline-block;
+        }
+
+        .loading-text-container span:nth-child(1) { animation-delay: 0s; color: #f472b6; }
+        .loading-text-container span:nth-child(2) { animation-delay: 0.1s; color: #fb923c; }
+        .loading-text-container span:nth-child(3) { animation-delay: 0.2s; color: #fbbf24; }
+        .loading-text-container span:nth-child(4) { animation-delay: 0.3s; color: #34d399; }
+        .loading-text-container span:nth-child(5) { animation-delay: 0.4s; color: #60a5fa; }
+        .loading-text-container span:nth-child(6) { animation-delay: 0.5s; color: #a78bfa; }
+
+        @keyframes wave {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-30px); }
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateX(-50%) translateY(100px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .result-display {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            text-align: center;
+            margin-top: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .result-label {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .result-value {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        @media (min-width: 481px) {
+            .app-container {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                border-radius: 24px;
+                overflow: hidden;
+            }
+
+            .bottom-nav {
+                border-radius: 0 0 24px 24px;
+            }
+        }
+
+        .text-center { text-align: center; }
+        .text-success { color: var(--success); }
+        .text-danger { color: var(--danger); }
+        .mt-2 { margin-top: 12px; }
+        .mb-2 { margin-bottom: 12px; }
+        .hidden { display: none; }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        
+        /* LOCK SCREEN NUMBER PAD */
+        #pin-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s;
+        }
+
+        .pin-box {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            padding: 50px;
+            border-radius: 20px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            animation: slideDownPin 0.5s ease-out;
+        }
+        
+        .pin-box h2, .pin-box p {
+            color: white;
+        }
+
+        @keyframes slideDownPin { 
+            from { transform: translateY(-50px); opacity: 0; } 
+            to { transform: translateY(0); opacity: 1; } 
+        }
+
+        .pin-input-container { margin: 30px 0; }
+        
+        .pin-display {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .pin-digit {
+            width: 60px;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .pin-digit.filled {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.6);
+            transform: scale(1.05);
+        }
+
+        .numpad {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .numpad-btn {
+            width: 100%;
+            height: 70px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 16px;
+            color: white;
+            font-size: 28px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .numpad-btn:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        .numpad-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .numpad-btn.clear-btn {
+            background: rgba(239, 68, 68, 0.3);
+            grid-column: 1 / 2;
+        }
+
+        .numpad-btn.zero-btn {
+            grid-column: 2 / 3;
+        }
+
+        .numpad-btn.backspace-btn {
+            background: rgba(251, 146, 60, 0.3);
+            grid-column: 3 / 4;
+            font-size: 24px;
+        }
+        
+        .status-text { margin-top: 20px; font-weight: 600; color: white; }
+        
+        .pin-dots { display: none; } /* Hide old dots */
+        .dot-wrapper, .dot { display: none; } /* Hide old design */
+        .instruction { display: none; } /* Hide keyboard instruction */
+
+
+
+
+        /* PRINT STYLES */
+        @media print {
+            .no-print, .app-container, .top-bar, .bottom-nav, .tab-nav { display: none !important; }
+            body { background: white; }
+            #receipt-print-area { display: block !important; }
+        }
+
+        #receipt-print-area {
+            display: none;
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+        }
+
+        .receipt-main {
+            border: 2px solid #000;
+            padding: 30px;
+        }
+
+        .r-header-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px solid #000;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .urdu-text {
+            font-family: 'Noto Nastaliq Urdu', serif;
+        }
+
+        .r-info-bar {
+            display: flex;
+            justify-content: space-between;
+            background: #f0f0f0;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+
+        .receipt-plate-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .plate {
+            width: 400px;
+            height: 100px;
+            background: white;
+            border: 3px solid black;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .plate-header {
+            background: #1a1a1a;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 3px 15px;
+            height: 25px;
+        }
+
+        .badge-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .punjab-text {
+            font-size: 12px;
+            font-weight: 900;
+            margin: 0;
+        }
+
+        .et-nc {
+            font-size: 8px;
+            text-align: right;
+            line-height: 1.1;
+        }
+
+        .number-area {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 900;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 8px;
+        }
+
+        .bike-plates-container {
+            display: none;
+            gap: 20px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .plate-base {
+            width: 180px;
+            height: 80px;
+            background: white;
+            border: 2px solid black;
+            border-radius: 5px;
+            position: relative;
+        }
+
+        .front-plate .logo-box {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            width: 35px;
+        }
+
+        .front-plate .logo-box .badge-svg {
+            width: 25px;
+            height: 25px;
+        }
+
+        .front-plate .dept-text {
+            font-size: 6px;
+            text-align: center;
+            font-weight: bold;
+            line-height: 1;
+            margin-top: 2px;
+        }
+
+        .main-text-bike {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 32px;
+            font-weight: 900;
+            font-family: 'Oswald', sans-serif;
+            letter-spacing: 3px;
+        }
+
+        .back-plate {
+            display: flex;
+            flex-direction: column;
+            padding: 8px;
+        }
+
+        .back-plate .logo-box {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .back-plate .badge-svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .back-plate .dept-text {
+            font-size: 5px;
+            font-weight: bold;
+            line-height: 1;
+        }
+
+        .letters {
+            font-size: 28px;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: 5px;
+            font-family: 'Oswald', sans-serif;
+        }
+
+        .digits {
+            font-size: 32px;
+            font-weight: 900;
+            text-align: center;
+            letter-spacing: 8px;
+            font-family: 'Oswald', sans-serif;
+            margin-top: -5px;
+        }
+
+        .details-container { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .detail-card { border: 1px solid #ddd; border-radius: 10px; overflow: hidden; }
+        .card-head { background: #f1f2f6; padding: 8px; font-weight: bold; text-align: center; }
+        .card-body { padding: 12px; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 8px; border-bottom: 1px dashed #ccc; padding-bottom: 5px; }
+        .pay-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+        .pay-table th { background: #0a3d62; color: white; padding: 10px; }
+        .pay-table td { padding: 12px; border: 1px solid #ddd; font-weight: bold; }
+        .grand-total { background: #1e3799; color: white; padding: 15px; display: flex; justify-content: space-between; font-size: 22px; font-weight: bold; border-radius: 8px; }
+        .receipt-pics-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 25px; }
+        .pic-box img { width: 100%; height: 160px; object-fit: contain; border: 1px solid #eee; }
+
+        .theme-blue .receipt-main { border-color: #2563eb; }
+        .theme-blue .r-header-box { border-bottom-color: #2563eb; }
+        .theme-dark .receipt-main { background: #1e293b; color: white; border-color: #000; }
+        .theme-dark .detail-card { background: #334155; border-color: #475569; }
+        .theme-green .receipt-main { border-color: #059669; }
+        .theme-green .r-header-box { border-bottom-color: #059669; }
+
+        .sub-btn {
+            transition: all 0.3s;
+        }
+
+        .zebra-row:nth-child(even) { background: #f8fafc; }
+        .zebra-row:hover { background: #e0e7ff !important; cursor: pointer; }
+
+        .trans-only, .reg-only { display: block; }
+    
+
+        /* IMAGE UPLOAD BOXES */
+        .upload-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .upload-box {
+            position: relative;
+            aspect-ratio: 1;
+            background: var(--light);
+            border: 2px dashed var(--border);
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .upload-box:hover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .upload-box.has-image {
+            border-style: solid;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .upload-box input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .upload-placeholder {
+            text-align: center;
+            color: #64748b;
+            pointer-events: none;
+        }
+
+        .upload-placeholder i {
+            font-size: 32px;
+            margin-bottom: 8px;
+            display: block;
+            color: var(--primary);
+        }
+
+        .upload-placeholder span {
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+        }
+
+        .upload-box.has-image .image-preview {
+            display: block;
+        }
+
+        .upload-box.has-image .upload-placeholder {
+            display: none;
+        }
+
+        .remove-image-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            width: 28px;
+            height: 28px;
+            background: var(--danger);
+            color: white;
+            border: 2px solid white;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 14px;
+            z-index: 10;
+            transition: all 0.2s;
+        }
+
+        .upload-box.has-image .remove-image-btn {
+            display: flex;
+        }
+
+        .remove-image-btn:hover {
+            background: #dc2626;
+            transform: scale(1.1);
+        }
+
+        /* VEHICLE TYPE RADIO BUTTONS */
+        .vehicle-type-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .vehicle-type-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .vehicle-type-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .vehicle-type-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 12px;
+            background: var(--light);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+
+        .vehicle-type-label i {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+
+        .vehicle-type-label span {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s;
+        }
+
+        .vehicle-type-option input[type="radio"]:checked + .vehicle-type-label {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: var(--primary);
+        }
+
+        .vehicle-type-option input[type="radio"]:checked + .vehicle-type-label i,
+        .vehicle-type-option input[type="radio"]:checked + .vehicle-type-label span {
+            color: white;
+        }
+
+        .vehicle-type-label:hover {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .vehicle-type-option input[type="radio"]:checked + .vehicle-type-label:hover {
+            background: linear-gradient(135deg, var(--primary-dark), var(--secondary));
+        }
+
+
+
+        /* TOTAL STATS AT TOP */
+        .total-stats-top {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .total-stats-top h3 {
+            font-size: 14px;
+            opacity: 0.9;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .stat-item-top {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 12px;
+            padding: 14px;
+            text-align: center;
+        }
+
+        .stat-item-top .label {
+            font-size: 11px;
+            opacity: 0.9;
+            margin-bottom: 6px;
+        }
+
+        .stat-item-top .value {
+            font-size: 20px;
+            font-weight: 700;
+        }
+
+        /* RECORD BOX DESIGN */
+        .records-container {
+            background: transparent;
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+        }
+
+        .record-box {
+            background: white;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .record-box:hover {
+            border-color: var(--primary);
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+
+        .record-box.selected {
+            border-color: var(--primary);
+            background: #f0f4ff;
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e7ff;
+        }
+
+        .record-date {
+            font-size: 13px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .record-id {
+            font-size: 11px;
+            color: var(--primary);
+            background: #f0f4ff;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-weight: 600;
+        }
+
+        .record-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .record-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .record-label {
+            font-size: 11px;
+            color: #64748b;
+            margin-bottom: 4px;
+            font-weight: 500;
+        }
+
+        .record-value {
+            font-size: 13px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+
+        .record-value.highlight {
+            color: var(--primary);
+            font-size: 15px;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 2px solid #e0e7ff;
+        }
+
+        .record-actions .action-btn {
+            flex: 1;
+            padding: 8px;
+            border: none;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+</style>
+</head>
+<body>
+
+<div id="pin-overlay">
+    <div class="pin-box">
+        <div style="font-size: 60px; margin-bottom: 15px; color: white;">🔒</div>
+        <h2>Madani Computer Center</h2>
+        <p>Enter PIN to Unlock</p>
+        
+        <div class="pin-display">
+            <div class="pin-digit" id="digit-1"></div>
+            <div class="pin-digit" id="digit-2"></div>
+            <div class="pin-digit" id="digit-3"></div>
+            <div class="pin-digit" id="digit-4"></div>
+        </div>
+
+        <div class="numpad">
+            <button class="numpad-btn" onclick="addDigit('1')">1</button>
+            <button class="numpad-btn" onclick="addDigit('2')">2</button>
+            <button class="numpad-btn" onclick="addDigit('3')">3</button>
+            <button class="numpad-btn" onclick="addDigit('4')">4</button>
+            <button class="numpad-btn" onclick="addDigit('5')">5</button>
+            <button class="numpad-btn" onclick="addDigit('6')">6</button>
+            <button class="numpad-btn" onclick="addDigit('7')">7</button>
+            <button class="numpad-btn" onclick="addDigit('8')">8</button>
+            <button class="numpad-btn" onclick="addDigit('9')">9</button>
+            <button class="numpad-btn clear-btn" onclick="clearPin()">
+                <i class="fas fa-times"></i>
+            </button>
+            <button class="numpad-btn zero-btn" onclick="addDigit('0')">0</button>
+            <button class="numpad-btn backspace-btn" onclick="backspace()">
+                <i class="fas fa-backspace"></i>
+            </button>
+        </div>
+        
+        <div class="status-text" id="status-msg">Enter PIN to unlock</div>
+        <input type="password" id="pin-hidden-input" maxlength="4" style="opacity:0; position:absolute; pointer-events: none;">
+    </div>
+</div>
+
+<div class="loader-overlay" id="loading-overlay">
+    <div class="loading-text-container">
+        <span>U</span><span>S</span><span>M</span><span>A</span><span>A</span><span>N</span>
+    </div>
+    <div style="color:white; margin-top:20px; letter-spacing:3px;">Processing Your Request...</div>
+</div>
+
+<div id="toast-container"></div>
+
+<svg style="display: none;">
+    <symbol id="punjab-logo" viewBox="0 0 500 550">
+        <circle cx="250" cy="230" r="190" fill="none" stroke="black" stroke-width="10"/>
+        <circle cx="250" cy="230" r="182" fill="none" stroke="black" stroke-width="2"/>
+        <path d="M 290 110 A 55 55 0 1 0 210 190 A 45 45 0 1 1 290 110" fill="black" />
+        <path d="M 235 90 l 4 12 l 12 0 l -10 8 l 4 12 l -10 -8 l -10 8 l 4 -12 l -10 -8 l 12 0 z" fill="black" />
+        <g fill="black">
+            <path d="M 100 215 c 50 -15 100 15 150 0 s 100 -15 150 0 v 8 c -50 -15 -100 15 -150 0 s -100 -15 -150 0 z" />
+            <path d="M 85 245 c 55 -15 110 15 165 0 s 110 -15 165 0 v 8 c -55 -15 -110 15 -165 0 s -110 -15 -165 0 z" />
+            <path d="M 75 275 c 58 -15 117 15 175 0 s 117 -15 175 0 v 8 c -58 -15 -117 15 -175 0 s -117 -15 -175 0 z" />
+            <path d="M 85 305 c 55 -15 110 15 165 0 s 110 -15 165 0 v 8 c -55 -15 -110 15 -165 0 s -110 -15 -165 0 z" />
+            <path d="M 105 335 c 48 -15 97 15 145 0 s 97 -15 145 0 v 8 c -48 -15 -97 15 -145 0 s -97 -15 -145 0 z" />
+        </g>
+        <text x="250" y="390" font-family="Arial, sans-serif" font-size="38" font-weight="900" text-anchor="middle" fill="black">حکومت پنجاب</text>
+    </symbol>
+</svg>
+
+<div class="app-container no-print">
+    <div class="top-bar">
+        <h1>🏍️ Madani Computer Center</h1>
+        <p>Vehicle & Finance Management</p>
+    </div>
+
+    <div class="main-content">
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('entry')">
+                <i class="fas fa-plus-circle"></i>
+                <span>Entry</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('cashbook')">
+                <i class="fas fa-book"></i>
+                <span>Cash Book</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('abu')">
+                <i class="fas fa-user-tie"></i>
+                <span>Abu</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('loan')">
+                <i class="fas fa-hand-holding-usd"></i>
+                <span>Loan</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('registration')">
+                <i class="fas fa-id-card"></i>
+                <span>Registration</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('transfer')">
+                <i class="fas fa-exchange-alt"></i>
+                <span>Transfer</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('calculator')">
+                <i class="fas fa-calculator"></i>
+                <span>Calculator</span>
+            </button>
+            <button class="tab-btn" onclick="switchTab('dukan')">
+                <i class="fas fa-store"></i>
+                <span>Dukan</span>
+            </button>
+        </div>
+
+        <!-- ENTRY TAB -->
+        <div id="entry" class="tab-content active">
+            <div class="card">
+                <div class="form-group">
+                    <label class="form-label"><i class="fas fa-palette"></i> Receipt Theme</label>
+                    <select id="receiptTheme" class="form-select">
+                        <option value="theme-blue">Professional Blue</option>
+                        <option value="theme-dark">Classic Dark</option>
+                        <option value="theme-green">Eco Green</option>
+                    </select>
+                </div>
+            </div>
+            <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">📊</div>
+                <div class="stat-label">Total Cases</div>
+                <div class="stat-value" id="st-total">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div class="stat-label">Registered</div>
+                <div class="stat-value" id="st-reg">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🔄</div>
+                <div class="stat-label">Transferred</div>
+                <div class="stat-value" id="st-trans">0</div>
+            </div>
+        </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Service Selection</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Service Type</label>
+                        <select id="serviceType" class="form-select" onchange="toggleFields()">
+                            <option value="Vehicle Transfer">Vehicle Transfer</option>
+                            <option value="New Registration">New Registration</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Vehicle Category</label>
+                        <div class="vehicle-type-group">
+                            <div class="vehicle-type-option">
+                                <input type="radio" name="vCategory" value="Bike" id="typeBike" checked onchange="updateVCategory()">
+                                <label for="typeBike" class="vehicle-type-label">
+                                    <i class="fas fa-motorcycle"></i>
+                                    <span>Bike</span>
+                                </label>
+                            </div>
+                            <div class="vehicle-type-option">
+                                <input type="radio" name="vCategory" value="Car" id="typeCar" onchange="updateVCategory()">
+                                <label for="typeCar" class="vehicle-type-label">
+                                    <i class="fas fa-car"></i>
+                                    <span>Car</span>
+                                </label>
+                            </div>
+                        </div>
+                        <select id="vCategory" class="form-select" style="display: none;">
+                            <option value="Bike">Bike</option>
+                            <option value="Car">Car</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="status" class="form-select">
+                        <option>Pending</option>
+                        <option>In Process</option>
+                        <option>Completed</option>
+                    </select>
+                </div>
+
+                <input type="hidden" id="editId">
+                <input type="hidden" id="picF"><input type="hidden" id="picB"><input type="hidden" id="picC">
+
+                <div class="form-group trans-only">
+                    <label class="form-label">Old Plate Number</label>
+                    <input type="text" id="oldNum" class="form-input" placeholder="MNT-15-8589" oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Registration / New No</label>
+                    <input type="text" id="newNum" class="form-input" placeholder="USM 786" oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <div class="form-group reg-only">
+                    <label class="form-label">Letter S.NO</label>
+                    <input type="text" id="letterSn" class="form-input">
+                </div>
+
+                <div class="form-row reg-only">
+                    <div class="form-group">
+                        <label class="form-label">Model Year</label>
+                        <input type="text" id="model" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Engine CC</label>
+                        <input type="text" id="engineCC" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Chassis Number</label>
+                    <input type="text" id="chassisNum" class="form-input" oninput="this.value = this.value.toUpperCase()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Tracking ID (9 Digits)</label>
+                    <input type="text" id="trackingId" class="form-input" maxlength="9" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" id="labelBuyer">Buyer Name (CAPITAL)</label>
+                    <input type="text" id="buyerName" class="form-input" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z\s]/g, '')">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" id="labelBuyerCNIC">Buyer CNIC</label>
+                    <input type="text" id="buyerCNIC" class="form-input" maxlength="15" oninput="formatCNIC(this)">
+                </div>
+
+                <div class="form-group trans-only">
+                    <label class="form-label">Seller Name (CAPITAL)</label>
+                    <input type="text" id="sellerName" class="form-input" oninput="this.value = this.value.toUpperCase().replace(/[^A-Z\s]/g, '')">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Mobile Number</label>
+                    <input type="text" id="mobNum" class="form-input" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Full Address</label>
+                    <input type="text" id="address" class="form-input" oninput="this.value = this.value.toUpperCase()" placeholder="ENTER COMPLETE ADDRESS">
+                </div>
+
+                <div class="card-header mt-2">
+                    <h3 class="card-title">Payment Details</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Govt Fee</label>
+                        <input type="number" id="feeT" class="form-input" oninput="sumTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Approval Fee</label>
+                        <input type="number" id="feeA" class="form-input" oninput="sumTotal()">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Service Charges</label>
+                        <input type="number" id="feeS" class="form-input" oninput="sumTotal()">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Payable</label>
+                        <input type="number" id="totalPay" class="form-input" readonly style="background:#e0e7ff; font-weight:bold;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Upload Documents (Max 3)</label>
+                    <div class="upload-container">
+                        <div class="upload-box" id="uploadBox1">
+                            <input type="file" accept="image/*" onchange="handleImageUploadNew(this, 'picF', 1)">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Doc 1</span>
+                            </div>
+                            <img class="image-preview" id="preview1">
+                            <div class="remove-image-btn" onclick="removeImageNew('picF', 1)">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="upload-box" id="uploadBox2">
+                            <input type="file" accept="image/*" onchange="handleImageUploadNew(this, 'picB', 2)">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Doc 2</span>
+                            </div>
+                            <img class="image-preview" id="preview2">
+                            <div class="remove-image-btn" onclick="removeImageNew('picB', 2)">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                        <div class="upload-box" id="uploadBox3">
+                            <input type="file" accept="image/*" onchange="handleImageUploadNew(this, 'picC', 3)">
+                            <div class="upload-placeholder">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <span>Doc 3</span>
+                            </div>
+                            <img class="image-preview" id="preview3">
+                            <div class="remove-image-btn" onclick="removeImageNew('picC', 3)">
+                                <i class="fas fa-times"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button id="saveBtn" class="btn btn-primary btn-block" onclick="saveData()">
+                    <i class="fas fa-save"></i> SAVE DATA
+                </button>
+                <button id="cancelEditBtn" class="btn btn-secondary btn-block mt-2" style="display:none;" onclick="resetForm()">
+                    Cancel Edit
+                </button>
+            </div>
+        </div>
+
+        <!-- CASHBOOK TAB -->
+        <div id="cashbook" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-label">Total Income</div>
+                    <div class="stat-value" id="cbGrandTotalIncome">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-label">Today Income</div>
+                    <div class="stat-value" id="cbTodayIncome">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💸</div>
+                    <div class="stat-label">Total Expense</div>
+                    <div class="stat-value" id="cbTotalExpense">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Add Transaction</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Filter by Date</label>
+                    <input type="date" id="cbFilterDate" class="form-input" onchange="loadCashBook()">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Transaction Detail</label>
+                    <input type="text" id="cbDetail" class="form-input" placeholder="Detail here...">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <input type="number" id="cbAmount" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select id="cbType" class="form-select">
+                            <option value="Income">Income (+)</option>
+                            <option value="Expense">Expense (-)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveCashBook()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button class="btn btn-secondary" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+
+                <div class="table-container mt-2">
+                    <table>
+                        <thead>
+                            <tr><th>Date</th><th>Detail</th><th>Income</th><th>Expense</th><th>Action</th></tr>
+                        </thead>
+                        <tbody id="cashBookTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ABU TAB -->
+        <div id="abu" class="tab-content">
+            <!-- Total Stats at Top -->
+            <div class="total-stats-top">
+                <h3>💼 Abu Hisab Summary</h3>
+                <div class="stats-row">
+                    <div class="stat-item-top">
+                        <div class="label">Total In</div>
+                        <div class="value" id="totalAbuIn">0</div>
+                    </div>
+                    <div class="stat-item-top">
+                        <div class="label">Total Out</div>
+                        <div class="value" id="totalAbuOut">0</div>
+                    </div>
+                </div>
+                <div class="stat-item-top" style="margin-top: 12px;">
+                    <div class="label">Net Balance</div>
+                    <div class="value" id="netAbuBalance">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Abu Hisab</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Detail / Note</label>
+                    <input type="text" id="abuDetail" class="form-input">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <input type="number" id="abuAmount" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select id="abuType" class="form-select">
+                            <option value="In">Money In (+)</option>
+                            <option value="Out">Money Out (-)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="saveAbu()">
+                    <i class="fas fa-save"></i> Save Abu Record
+                </button>
+
+                <div class="table-container mt-2">
+                    <table>
+                        <thead><tr><th>Date</th><th>Detail</th><th>Amount</th><th>Type</th><th>Action</th></tr></thead>
+                        <tbody id="abuTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- LOAN TAB -->
+        <div id="loan" class="tab-content">
+            <!-- Total Stats at Top -->
+            <div class="total-stats-top">
+                <h3>💰 Loan Summary</h3>
+                <div class="stats-row">
+                    <div class="stat-item-top">
+                        <div class="label">Given 😭</div>
+                        <div class="value" id="totalGiven">0</div>
+                    </div>
+                    <div class="stat-item-top">
+                        <div class="label">Taken 😘</div>
+                        <div class="value" id="totalTaken">0</div>
+                    </div>
+                </div>
+                <div class="stat-item-top" style="margin-top: 12px;">
+                    <div class="label">Net Balance</div>
+                    <div class="value" id="netBalance">0</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Loan Management</h3>
+                </div>
+
+                <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="sub-btn btn" style="background: #475569; color: white;" onclick="renderLoanTable('All')">All Records</button>
+                    <button class="sub-btn btn" style="background: #ef4444; color: white;" onclick="renderLoanTable('Given')">Loan Given</button>
+                    <button class="sub-btn btn" style="background: #059669; color: white;" onclick="renderLoanTable('Taken')">Loan Taken</button>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Person Name</label>
+                    <input type="text" id="loanPersonName" class="form-input">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Amount</label>
+                        <input type="number" id="loanAmount" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select id="loanType" class="form-select">
+                            <option value="Given">Loan Given 😭</option>
+                            <option value="Taken">Loan Taken 😘</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Detail / Note</label>
+                    <input type="text" id="loanDetail" class="form-input" placeholder="Optional details...">
+                </div>
+
+                <button class="btn btn-primary btn-block" onclick="saveLoan()">
+                    <i class="fas fa-save"></i> Save Loan Record
+                </button>
+
+                <div class="table-container mt-2">
+                    <table>
+                        <thead><tr><th>Date</th><th>Person</th><th>Detail</th><th>Given 😭</th><th>Taken 😘</th><th>Action</th></tr></thead>
+                        <tbody id="loanTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- REGISTRATION TAB -->
+        <div id="registration" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Registration Records</h3>
+                </div>
+                <div class="records-container" id="regTableBody">
+                    <!-- Records will be rendered here as boxes -->
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSFER TAB -->
+        <div id="transfer" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Transfer Records</h3>
+                </div>
+                <div class="records-container" id="transTableBody">
+                    <!-- Records will be rendered here as boxes -->
+                </div>
+            </div>
+        </div>
+
+        <!-- CALCULATOR TAB -->
+        <div id="calculator" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Transfer Fee Calculator</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Select Bike Model</label>
+                    <select id="bikeSelect" class="form-select" onchange="calculateTotal()">
+                        <option value="5313">CD 70cc - Rs. 5,313</option>
+                        <option value="4815">China 70cc - Rs. 4,815</option>
+                        <option value="5815">Honda 125cc - Rs. 5,815</option>
+                        <option value="5815">100cc Bike - Rs. 5,815</option>
+                        <option value="7500">Honda CB 150F - Rs. 7,500</option>
+                        <option value="8200">Yamaha YBR 125 - Rs. 8,200</option>
+                        <option value="9000">Suzuki GS 150 - Rs. 9,000</option>
+                    </select>
+                </div>
+
+                <div class="checkbox-group" style="background: #fff7ed; border-left: 5px solid #f97316;">
+                    <input type="checkbox" id="exciseFee" checked disabled style="cursor: not-allowed;">
+                    <span class="checkbox-label">Excise Fees (Always Required)</span>
+                    <span class="checkbox-amount" style="color: #f97316;">Rs. 1,000</span>
+                </div>
+
+                <div class="checkbox-group" onclick="toggleCheckbox('lateFee')">
+                    <input type="checkbox" id="lateFee" onchange="calculateTotal()">
+                    <span class="checkbox-label">Late Payment Fee</span>
+                    <span class="checkbox-amount">Rs. 500</span>
+                </div>
+
+                <div class="checkbox-group" onclick="toggleCheckbox('transferFee')">
+                    <input type="checkbox" id="transferFee" onchange="calculateTotal()">
+                    <span class="checkbox-label">Letter Transfer</span>
+                    <span class="checkbox-amount">Rs. 2,000</span>
+                </div>
+
+                <div class="result-display">
+                    <div class="result-label">Grand Total</div>
+                    <div class="result-value" id="grandTotal">Rs. 6,313</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- DUKAN TAB -->
+        <div id="dukan" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Daily Shop Ledger</h3>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" id="h_date" class="form-input">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Udhaar Lena</label>
+                        <input type="number" id="h_udhaarL" class="form-input" oninput="calculateH()" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Paise Dena</label>
+                        <input type="number" id="h_paisyLeny" class="form-input" oninput="calculateH()" placeholder="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Abu Amount</label>
+                    <input type="number" id="h_abu" class="form-input" oninput="calculateH()" placeholder="0">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Service 1</label>
+                    <input type="number" class="form-input h_svc" oninput="calculateH()" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service 2</label>
+                    <input type="number" class="form-input h_svc" oninput="calculateH()" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service 3</label>
+                    <input type="number" class="form-input h_svc" oninput="calculateH()" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Service 4</label>
+                    <input type="number" class="form-input h_svc" oninput="calculateH()" placeholder="0">
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">🏦</div>
+                        <div class="stat-label">Bank Total</div>
+                        <div class="stat-value" id="h_bankTotal">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">💵</div>
+                        <div class="stat-label">In Hand</div>
+                        <div class="stat-value text-success" id="h_inHand">0</div>
+                    </div>
+                </div>
+
+                <div style="display:flex; gap:10px;">
+                    <button class="btn btn-primary" style="flex:2;" onclick="saveLedger()">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button class="btn btn-secondary" style="flex:1;" onclick="clearLedgerForm()">
+                        <i class="fas fa-eraser"></i> Clear
+                    </button>
+                    <button class="btn btn-success" style="flex:1;" onclick="window.print()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+
+                <div class="table-container mt-2">
+                    <h4 style="margin-bottom:15px; font-size:14px;">Ledger History</h4>
+                    <table>
+                        <thead><tr><th>Date</th><th>Bank Total</th><th>Udhaar</th><th>In Hand</th><th>Actions</th></tr></thead>
+                        <tbody id="ledgerHistoryBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active" onclick="switchTab('entry')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('loan')">
+            <i class="fas fa-hand-holding-usd"></i>
+            <span>Loan</span>
+        </div>
+        <div class="nav-item" onclick="switchTab('dukan')">
+            <i class="fas fa-store"></i>
+            <span>Shop</span>
+        </div>
+        <div class="nav-item" onclick="syncFromSheet()">
+            <i class="fas fa-sync"></i>
+            <span>Sync</span>
+        </div>
+    </div>
+</div>
+
+<div id="receipt-print-area">
+    <div class="receipt-main">
+        <div class="r-header-box">
+            <div class="r-logo-side">
+                <h1 class="urdu-text">Madani Computer Center</h1>
+                <h3 style="margin: 0; color: #0a3d62;">Proprietor: Muhammad Usman</h3>
+                <p id="pr-service-head"></p>
+            </div>
+            <div style="text-align:right">
+                <h2 style="margin:0; color:#1e3799">INVOICE</h2>
+                <p style="margin:2px 0; font-weight:bold">ID: <span id="pr-inv"></span></p>
+            </div>
+        </div>
+        
+        <div class="r-info-bar">
+            <div class="info-item"><b>Date:</b> <span id="pr-date"></span></div>
+            <div class="info-item"><b>Contact:</b> 03292539265</div>
+            <div class="info-item"><b>Location:</b> Ward no 8 Chakki Wala Bazar Tibba Sultan Pur</div>
+        </div>
+        <div style="margin-bottom:15px;">
+             <strong>Address:</strong> <span id="r-address-display"></span>
+        </div>
+
+        <div class="receipt-plate-container" id="car-plate-view">
+            <div class="plate">
+                <div class="plate-header">
+                    <svg class="badge-svg"><use xlink:href="#punjab-logo"></use></svg>
+                    <h1 class="punjab-text">PUNJAB</h1>
+                    <div class="et-nc">PUNJAB<br>ET&NC</div>
+                </div>
+                <div class="number-area">
+                    <div id="display-text-plate">ABC 1234</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bike-plates-container" id="bike-plate-view">
+            <div class="plate-base front-plate">
+                <div class="logo-box">
+                    <svg class="badge-svg"><use xlink:href="#punjab-logo"></use></svg>
+                    <div class="dept-text">PUNJAB<br>ET&NC</div>
+                </div>
+                <div class="main-text-bike" id="bike-f-text">BFC 3556</div>
+            </div>
+            <div class="plate-base back-plate">
+                <div class="logo-box">
+                    <svg class="badge-svg"><use xlink:href="#punjab-logo"></use></svg>
+                    <div class="dept-text">PUNJAB<br>ET&NC</div>
+                </div>
+                <div class="letters" id="bike-b-letters">BFC</div>
+                <div class="digits" id="bike-b-digits">3556</div>
+            </div>
+        </div>
+        
+        <div class="details-container">
+            <div class="detail-card">
+                <div class="card-head">VEHICLE DETAILS</div>
+                <div class="card-body">
+                    <div class="detail-row"><span>Category:</span> <span id="pr-cat" style="font-weight:bold; color:blue;"></span></div>
+                    <div class="detail-row"><span>Old Number:</span> <span id="pr-old"></span></div>
+                    <div class="detail-row"><span>New Number:</span> <span id="pr-new" style="color:red; font-weight:bold;"></span></div>
+                    <div class="detail-row"><span>Chassis No:</span> <span id="pr-chassis"></span></div>
+                    <div class="detail-row"><span>Tracking ID:</span> <span id="pr-tracking"></span></div>
+                </div>
+            </div>
+            <div class="detail-card">
+                <div class="card-head">CUSTOMER DETAILS</div>
+                <div class="card-body">
+                    <div class="detail-row"><span>Buyer Name:</span> <span id="pr-buyer"></span></div>
+                    <div class="detail-row"><span>Buyer CNIC:</span> <span id="pr-b-cnic"></span></div>
+                    <div class="detail-row"><span>Seller Name:</span> <span id="pr-seller"></span></div>
+                    <div class="detail-row"><span>Mobile No:</span> <span id="pr-mob"></span></div>
+                    <div class="detail-row"><span>Address:</span> <span id="r-address">---</span></div>
+                </div>
+            </div>
+        </div>
+
+        <table class="pay-table">
+            <thead><tr><th>Description</th><th style="text-align:right">Amount</th></tr></thead>
+            <tbody id="pr-fees-body"></tbody>
+        </table>
+
+        <div class="grand-total"><span>TOTAL PAYABLE:</span> <span id="pr-total"></span></div>
+
+        <div class="receipt-pics-grid">
+            <div class="pic-box"><img id="pr-img-f"></div>
+            <div class="pic-box"><img id="pr-img-b"></div>
+            <div class="pic-box"><img id="pr-img-c"></div>
+        </div>
+
+        <div style="margin-top:auto; padding-top:40px; display:flex; justify-content:space-between">
+            <div style="text-align:center; width:150px; border-top:1px solid #000">Customer Signature</div>
+            <div class="urdu-text" style="font-size:20px">تشریف لانے کا شکریہ</div>
+            <div style="text-align:center; width:150px; border-top:1px solid #000">Manager Signature</div>
+        </div>
+    </div>
+</div>
+
+<script>
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwpgvOhSyUxIlgNUZqi-wfZwMsWrUKv31QGY_VnERHtLdHAqqbPtAR1IgJEE3g9gSc/exec";
+const KEY = 'madani_master_v3';
+const LOAN_KEY = 'madani_loan_v3';
+const ABU_KEY = 'madani_abu_v3';
+const LEDGER_KEY = 'madani_ledger_v3';
+const CASHBOOK_KEY = 'madani_cashbook_v3';
+let currentLoanFilter = 'All';
+
+function showLoader() { document.getElementById('loading-overlay').style.display = 'flex'; }
+function hideLoader() { document.getElementById('loading-overlay').style.display = 'none'; }
+
+function formatCNIC(input) {
+    let val = input.value.replace(/\D/g, '');
+    let formatted = "";
+    if (val.length > 0) formatted += val.substring(0, 5);
+    if (val.length > 5) formatted += "-" + val.substring(5, 12);
+    if (val.length > 12) formatted += "-" + val.substring(12, 13);
+    input.value = formatted;
+}
+
+function switchTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+    
+    document.getElementById(tabName).classList.add('active');
+    
+    // More reliable button activation - match onclick attribute
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        const onclick = btn.getAttribute('onclick');
+        if (onclick && onclick.includes(`'${tabName}'`)) {
+            btn.classList.add('active');
+        }
+    });
+    
+    document.querySelectorAll('.nav-item').forEach(item => {
+        const itemText = item.querySelector('span')?.textContent.toLowerCase();
+        if ((tabName === 'entry' && itemText === 'home') ||
+            (tabName === 'loan' && itemText === 'loan') ||
+            (tabName === 'dukan' && itemText === 'shop')) {
+            item.classList.add('active');
+        }
+    });
+    
+    if(tabName === 'registration') renderTable('New Registration');
+    else if(tabName === 'transfer') renderTable('Vehicle Transfer');
+    else if(tabName === 'loan') renderLoanTable();
+    else if(tabName === 'abu') renderAbu();
+    else if(tabName === 'cashbook') loadCashBook();
+    else if(tabName === 'dukan') renderLedgerTable();
+}
+
+function toggleFields() {
+    let service = document.getElementById('serviceType').value;
+    let transOnly = document.querySelectorAll('.trans-only');
+    let regOnly = document.querySelectorAll('.reg-only');
+    
+    if(service === 'Vehicle Transfer') {
+        transOnly.forEach(e => e.style.display = 'block');
+        regOnly.forEach(e => e.style.display = 'none');
+        document.getElementById('labelBuyer').innerText = "Buyer Name (CAPITAL)";
+        document.getElementById('labelBuyerCNIC').innerText = "Buyer CNIC";
+    } else {
+        transOnly.forEach(e => e.style.display = 'none');
+        regOnly.forEach(e => e.style.display = 'block');
+        document.getElementById('labelBuyer').innerText = "Owner Name (CAPITAL)";
+        document.getElementById('labelBuyerCNIC').innerText = "Owner CNIC";
+    }
+}
+
+function sumTotal() {
+    let t = (parseInt(document.getElementById('feeT').value) || 0) +
+            (parseInt(document.getElementById('feeA').value) || 0) +
+            (parseInt(document.getElementById('feeS').value) || 0);
+    document.getElementById('totalPay').value = t;
+}
+
+function encode(input, hiddenId) {
+    const file = input.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = () => document.getElementById(hiddenId).value = reader.result;
+    reader.readAsDataURL(file);
+}
+
+function saveData() {
+    showLoader();
+    let editId = document.getElementById('editId').value;
+    let obj = {
+        id: editId || Date.now(),
+        date: new Date().toLocaleDateString(),
+        serviceType: document.getElementById('serviceType').value,
+        vCategory: document.getElementById('vCategory').value,
+        status: document.getElementById('status').value,
+        oldNum: document.getElementById('oldNum').value,
+        newNum: document.getElementById('newNum').value,
+        letterSn: document.getElementById('letterSn').value,
+        model: document.getElementById('model').value,
+        engineCC: document.getElementById('engineCC').value,
+        chassisNum: document.getElementById('chassisNum').value,
+        trackingId: document.getElementById('trackingId').value,
+        buyerName: document.getElementById('buyerName').value,
+        buyerCNIC: document.getElementById('buyerCNIC').value,
+        sellerName: document.getElementById('sellerName').value,
+        mobNum: document.getElementById('mobNum').value,
+        address: document.getElementById('address').value,
+        feeT: document.getElementById('feeT').value,
+        feeA: document.getElementById('feeA').value,
+        feeS: document.getElementById('feeS').value,
+        total: document.getElementById('totalPay').value,
+        picF: document.getElementById('picF').value,
+        picB: document.getElementById('picB').value,
+        picC: document.getElementById('picC').value
+    };
+
+    fetch(SCRIPT_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        body: JSON.stringify(obj)
+    });
+
+    let records = JSON.parse(localStorage.getItem(KEY)) || [];
+    if(editId) {
+        records = records.filter(r => r.id != editId);
+    }
+    records.push(obj);
+    localStorage.setItem(KEY, JSON.stringify(records));
+    
+    setTimeout(() => {
+        hideLoader();
+        showToast("Data saved successfully!", "success");
+        resetForm();
+        renderTable();
+        updateStats();
+    }, 1500);
+}
+
+function resetForm() {
+    document.getElementById('editId').value = '';
+    document.querySelectorAll('input').forEach(i => { if(i.type !== 'file' && i.type !== 'checkbox') i.value = ''; });
+    document.getElementById('saveBtn').innerText = 'SAVE DATA';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+    toggleFields();
+}
+
+function renderTable(filter = '') {
+    let records = JSON.parse(localStorage.getItem(KEY)) || [];
+    if(filter) records = records.filter(r => r.serviceType === filter);
+    
+    let html = '';
+    records.slice().reverse().forEach(r => {
+        let statusClass = r.status === 'Completed' ? 'status-completed' : r.status === 'In Process' ? 'status-process' : 'status-pending';
+        
+        if(filter === 'New Registration') {
+            html += `
+            <div class="record-box" onclick="selectRecordBox(this)">
+                <div class="record-header">
+                    <span class="record-date">${r.date || 'N/A'}</span>
+                    <span class="record-id">#${r.id}</span>
+                </div>
+                <div class="record-grid">
+                    <div class="record-item">
+                        <div class="record-label">New Number</div>
+                        <div class="record-value">${r.newNum || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Category</div>
+                        <div class="record-value">${r.vCategory || 'Bike'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Buyer</div>
+                        <div class="record-value">${r.buyerName || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Tracking ID</div>
+                        <div class="record-value">${r.trackingId || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Status</div>
+                        <div class="record-value"><span class="status-badge ${statusClass}">${r.status}</span></div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Total Amount</div>
+                        <div class="record-value highlight">Rs ${r.total || 0}</div>
+                    </div>
+                </div>
+                <div class="record-actions">
+                    <button class="action-btn" style="background:#10b981; color:white; flex: 1;" onclick="event.stopPropagation(); printR(${r.id})">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="action-btn action-btn-edit" onclick="event.stopPropagation(); editRecord(${r.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="action-btn action-btn-delete" onclick="event.stopPropagation(); del(${r.id})">
+                        <i class="fas fa-trash"></i> Del
+                    </button>
+                </div>
+            </div>`;
+        } else if(filter === 'Vehicle Transfer') {
+            html += `
+            <div class="record-box" onclick="selectRecordBox(this)">
+                <div class="record-header">
+                    <span class="record-date">${r.date || 'N/A'}</span>
+                    <span class="record-id">#${r.id}</span>
+                </div>
+                <div class="record-grid">
+                    <div class="record-item">
+                        <div class="record-label">Old Number</div>
+                        <div class="record-value">${r.oldNum || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">New Number</div>
+                        <div class="record-value">${r.newNum || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Category</div>
+                        <div class="record-value">${r.vCategory || 'Bike'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Buyer</div>
+                        <div class="record-value">${r.buyerName || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Tracking ID</div>
+                        <div class="record-value">${r.trackingId || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Status</div>
+                        <div class="record-value"><span class="status-badge ${statusClass}">${r.status}</span></div>
+                    </div>
+                    <div class="record-item" style="grid-column: 1 / -1;">
+                        <div class="record-label">Chassis Number</div>
+                        <div class="record-value">${r.chassisNum || 'N/A'}</div>
+                    </div>
+                    <div class="record-item">
+                        <div class="record-label">Total Amount</div>
+                        <div class="record-value highlight">Rs ${r.total || 0}</div>
+                    </div>
+                </div>
+                <div class="record-actions">
+                    <button class="action-btn" style="background:#10b981; color:white; flex: 1;" onclick="event.stopPropagation(); printR(${r.id})">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                    <button class="action-btn action-btn-edit" onclick="event.stopPropagation(); editRecord(${r.id})">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                    <button class="action-btn action-btn-delete" onclick="event.stopPropagation(); del(${r.id})">
+                        <i class="fas fa-trash"></i> Del
+                    </button>
+                </div>
+            </div>`;
+        }
+    });
+
+    if(filter === 'New Registration') {
+        document.getElementById('regTableBody').innerHTML = html || '<div class="empty-state" style="padding: 40px; text-align: center; color: #94a3b8;"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><p style="font-size: 14px;">No registration records found</p></div>';
+    } else if(filter === 'Vehicle Transfer') {
+        document.getElementById('transTableBody').innerHTML = html || '<div class="empty-state" style="padding: 40px; text-align: center; color: #94a3b8;"><i class="fas fa-inbox" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i><p style="font-size: 14px;">No transfer records found</p></div>';
+    }
+}
+
+function selectRecordBox(element) {
+    document.querySelectorAll('.record-box').forEach(box => box.classList.remove('selected'));
+    element.classList.add('selected');
+}
+
+function updateStats() {
+    let records = JSON.parse(localStorage.getItem(KEY)) || [];
+    let reg = records.filter(r => r.serviceType === 'New Registration').length;
+    let trans = records.filter(r => r.serviceType === 'Vehicle Transfer').length;
+    
+    document.getElementById('st-total').innerText = records.length;
+    document.getElementById('st-reg').innerText = reg;
+    document.getElementById('st-trans').innerText = trans;
+}
+
+function editRecord(id) {
+    let records = JSON.parse(localStorage.getItem(KEY)) || [];
+    let r = records.find(x => x.id == id);
+    if(r) {
+        switchTab('entry');
+        document.getElementById('editId').value = r.id;
+        document.getElementById('serviceType').value = r.serviceType;
+        document.getElementById('vCategory').value = r.vCategory || "Bike";
+        document.getElementById('status').value = r.status;
+        document.getElementById('newNum').value = r.newNum || "";
+        document.getElementById('oldNum').value = r.oldNum || "";
+        document.getElementById('buyerName').value = r.buyerName || "";
+        document.getElementById('buyerCNIC').value = r.buyerCNIC || "";
+        document.getElementById('letterSn').value = r.letterSn || "";
+        document.getElementById('model').value = r.model || "";
+        document.getElementById('engineCC').value = r.engineCC || "";
+        document.getElementById('sellerName').value = r.sellerName || "";
+        document.getElementById('mobNum').value = r.mobNum || "";
+        document.getElementById('address').value = r.address || '';
+        document.getElementById('chassisNum').value = r.chassisNum || "";
+        document.getElementById('trackingId').value = r.trackingId || "";
+        document.getElementById('feeT').value = r.feeT || "";
+        document.getElementById('feeA').value = r.feeA || "";
+        document.getElementById('feeS').value = r.feeS || "";
+        document.getElementById('totalPay').value = r.total || "";
+        document.getElementById('picF').value = r.picF || "";
+        document.getElementById('picB').value = r.picB || "";
+        document.getElementById('picC').value = r.picC || "";
+        document.getElementById('saveBtn').innerText = "UPDATE DATA";
+        document.getElementById('cancelEditBtn').style.display = "block";
+        toggleFields();
+    }
+}
+
+function del(id) {
+    if (confirm("Delete this record from Sheet?")) {
+        showLoader();
+        
+        fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id: id, action: "delete" })
+        });
+
+        setTimeout(() => {
+            let records = JSON.parse(localStorage.getItem(KEY)) || [];
+            records = records.filter(r => r.id != id);
+            localStorage.setItem(KEY, JSON.stringify(records));
+            renderTable();
+            updateStats();
+            hideLoader();
+            showToast("Delete request sent!", "error");
+        }, 1000); 
+    }
+}
+
+function printR(id) {
+    let records = JSON.parse(localStorage.getItem(KEY)) || [];
+    let r = records.find(x => x.id === id);
+
+    if (!r) {
+        alert("Record not found!");
+        return;
+    }
+
+    let theme = document.getElementById('receiptTheme').value;
+    let prArea = document.getElementById('receipt-print-area');
+    prArea.className = theme;
+    prArea.style.display = 'block';
+
+    if (r.vCategory === 'Bike') {
+        document.getElementById('car-plate-view').style.display = 'none';
+        document.getElementById('bike-plate-view').style.display = 'flex';
+        
+        let bikeNum = (r.newNum || "WAITING").toUpperCase().trim();
+        document.getElementById('bike-f-text').innerText = bikeNum;
+        
+        let letters = bikeNum.replace(/[^A-Z]/g, '');
+        let digits  = bikeNum.replace(/[^0-9]/g, '');
+        document.getElementById('bike-b-letters').innerText = letters;
+        document.getElementById('bike-b-digits').innerText  = digits;
+    } else {
+        document.getElementById('car-plate-view').style.display = 'flex';
+        document.getElementById('bike-plate-view').style.display = 'none';
+        document.getElementById('display-text-plate').innerText = r.newNum || "WAITING";
+    }
+
+    document.getElementById('pr-service-head').innerText = r.serviceType;
+    document.getElementById('pr-cat').innerText = r.vCategory || "N/A";
+    document.getElementById('pr-inv').innerText = r.id.toString().slice(-6);
+    document.getElementById('pr-date').innerText = new Date().toLocaleDateString();
+    document.getElementById('pr-old').innerText = r.oldNum || "N/A";
+    document.getElementById('pr-new').innerText = r.newNum || "N/A";
+    document.getElementById('pr-chassis').innerText = r.chassisNum || "N/A";
+    document.getElementById('pr-tracking').innerText = r.trackingId || "N/A";
+    document.getElementById('pr-buyer').innerText = r.buyerName || "N/A";
+    document.getElementById('pr-b-cnic').innerText = r.buyerCNIC || "N/A";
+    document.getElementById('pr-seller').innerText = r.sellerName || "N/A";
+    document.getElementById('pr-mob').innerText = r.mobNum || "N/A";
+    document.getElementById('r-address-display').innerText = r.address || "N/A";
+    document.getElementById('pr-total').innerText = "Rs " + (r.total || 0);
+
+    document.getElementById('pr-fees-body').innerHTML = `
+        <tr><td>Govt Fee</td><td style="text-align:right">${r.feeT || 0}</td></tr>
+        <tr><td>Approval Fee</td><td style="text-align:right">${r.feeA || 0}</td></tr>
+        <tr><td>Service Charges</td><td style="text-align:right">${r.feeS || 0}</td></tr>
+    `;
+
+    document.getElementById('pr-img-f').src = r.picF || '';
+    document.getElementById('pr-img-b').src = r.picB || '';
+    document.getElementById('pr-img-c').src = r.picC || '';
+
+    setTimeout(() => { 
+        window.print(); 
+    }, 1000); 
+}
+
+function selectRow(row) {
+    document.querySelectorAll('tr').forEach(r => r.classList.remove('selected-row'));
+    row.classList.add('selected-row');
+}
+
+function saveLoan() {
+    let obj = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString(),
+        name: document.getElementById('loanPersonName').value,
+        amount: parseInt(document.getElementById('loanAmount').value) || 0,
+        type: document.getElementById('loanType').value,
+        detail: document.getElementById('loanDetail').value
+    };
+
+    if(!obj.name || !obj.amount) {
+        showToast("Please fill required fields", "error");
+        return;
+    }
+
+    let records = JSON.parse(localStorage.getItem(LOAN_KEY)) || [];
+    records.push(obj);
+    localStorage.setItem(LOAN_KEY, JSON.stringify(records));
+
+    document.getElementById('loanPersonName').value = '';
+    document.getElementById('loanAmount').value = '';
+    document.getElementById('loanDetail').value = '';
+    
+    renderLoanTable(currentLoanFilter);
+    showToast("Loan saved!", "success");
+}
+
+function renderLoanTable(filter = currentLoanFilter) {
+    currentLoanFilter = filter;
+
+    const buttons = document.querySelectorAll('.sub-btn');
+    buttons.forEach(btn => {
+        btn.style.transform = "scale(1)";
+        btn.style.boxShadow = "none";
+        btn.style.opacity = "0.8";
+
+        if ((btn.innerText.includes(filter) && filter !== 'All') || (filter === 'All' && btn.innerText.includes('All'))) {
+            btn.style.transform = "scale(1.05)";
+            btn.style.boxShadow = "0px 4px 15px rgba(0,0,0,0.3)";
+            btn.style.opacity = "1";
+        }
+    });
+
+    let records = JSON.parse(localStorage.getItem(LOAN_KEY)) || [];
+    let html = ""; 
+    let totalG = 0; 
+    let totalT = 0;
+
+    let filteredRecords = records;
+    if (filter !== 'All') {
+        filteredRecords = records.filter(r => r.type === filter);
+    }
+
+    filteredRecords.slice().reverse().forEach(r => {
+        let given = r.type === 'Given' ? r.amount : 0;
+        let taken = r.type === 'Taken' ? r.amount : 0;
+        
+        html += `<tr class="zebra-row" onclick="selectRow(this)">
+            <td>${r.date}</td>
+            <td><b>${r.name}</b></td>
+            <td>${r.detail}</td>
+            <td style="color:#ef4444">${given || '-'}</td>
+            <td style="color:#10b981">${taken || '-'}</td>
+            <td><button class="action-btn action-btn-delete" onclick="event.stopPropagation(); deleteLoan(${r.id})">Del</button></td>
+        </tr>`;
+    });
+
+    document.getElementById('loanTableBody').innerHTML = html || "<tr><td colspan='6' class='text-center'>No Records Found</td></tr>";
+    
+    records.forEach(r => {
+        if(r.type === 'Given') totalG += r.amount;
+        if(r.type === 'Taken') totalT += r.amount;
+    });
+
+    document.getElementById('totalGiven').innerText = totalG; 
+    document.getElementById('totalTaken').innerText = totalT;
+    document.getElementById('netBalance').innerText = totalT - totalG;
+}
+
+function deleteLoan(id) {
+    if (confirm("Delete this loan record?")) {
+        let records = JSON.parse(localStorage.getItem(LOAN_KEY)) || [];
+        records = records.filter(r => r.id != id);
+        localStorage.setItem(LOAN_KEY, JSON.stringify(records));
+        renderLoanTable(currentLoanFilter);
+        showToast("Loan deleted", "error");
+    }
+}
+
+function saveAbu() {
+    let obj = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString(),
+        detail: document.getElementById('abuDetail').value,
+        amt: parseInt(document.getElementById('abuAmount').value) || 0,
+        type: document.getElementById('abuType').value
+    };
+
+    if(!obj.detail || !obj.amt) {
+        showToast("Please fill required fields", "error");
+        return;
+    }
+
+    let records = JSON.parse(localStorage.getItem(ABU_KEY)) || [];
+    records.push(obj);
+    localStorage.setItem(ABU_KEY, JSON.stringify(records));
+
+    document.getElementById('abuDetail').value = '';
+    document.getElementById('abuAmount').value = '';
+    
+    renderAbu();
+    showToast("Abu record saved!", "success");
+}
+
+function renderAbu() {
+    let records = JSON.parse(localStorage.getItem(ABU_KEY)) || [];
+    let html = '';
+    let totalIn = 0;
+    let totalOut = 0;
+
+    records.slice().reverse().forEach(r => {
+        html += `<tr class="zebra-row" onclick="selectRow(this)">
+            <td>${r.date}</td>
+            <td>${r.detail}</td>
+            <td>Rs ${r.amt}</td>
+            <td><span style="color:${r.type === 'In' ? '#10b981' : '#ef4444'}">${r.type}</span></td>
+            <td><button class="action-btn action-btn-delete" onclick="event.stopPropagation(); deleteAbu(${r.id})">Del</button></td>
+        </tr>`;
+
+        if(r.type === 'In') totalIn += r.amt;
+        else totalOut += r.amt;
+    });
+
+    document.getElementById('abuTableBody').innerHTML = html || '<tr><td colspan="5" class="text-center">No records</td></tr>';
+    document.getElementById('totalAbuIn').innerText = totalIn;
+    document.getElementById('totalAbuOut').innerText = totalOut;
+    document.getElementById('netAbuBalance').innerText = totalIn - totalOut;
+}
+
+function deleteAbu(id) {
+    if (confirm("Delete this Abu record?")) {
+        let records = JSON.parse(localStorage.getItem(ABU_KEY)) || [];
+        records = records.filter(r => r.id != id);
+        localStorage.setItem(ABU_KEY, JSON.stringify(records));
+        renderAbu();
+        showToast("Abu record deleted", "error");
+    }
+}
+
+function saveCashBook() {
+    let obj = {
+        id: Date.now(),
+        date: new Date().toLocaleDateString(),
+        detail: document.getElementById('cbDetail').value,
+        amount: parseInt(document.getElementById('cbAmount').value) || 0,
+        type: document.getElementById('cbType').value
+    };
+
+    if(!obj.detail || !obj.amount) {
+        showToast("Please fill all fields", "error");
+        return;
+    }
+
+    let records = JSON.parse(localStorage.getItem(CASHBOOK_KEY)) || [];
+    records.push(obj);
+    localStorage.setItem(CASHBOOK_KEY, JSON.stringify(records));
+
+    document.getElementById('cbDetail').value = '';
+    document.getElementById('cbAmount').value = '';
+    
+    loadCashBook();
+    showToast("Transaction saved!", "success");
+}
+
+function loadCashBook() {
+    let records = JSON.parse(localStorage.getItem(CASHBOOK_KEY)) || [];
+    let filterDate = document.getElementById('cbFilterDate').value;
+    
+    if(filterDate) {
+        let fd = new Date(filterDate).toLocaleDateString();
+        records = records.filter(r => r.date === fd);
+    }
+
+    let html = '';
+    let totalIncome = 0;
+    let totalExpense = 0;
+    let todayIncome = 0;
+    let today = new Date().toLocaleDateString();
+
+    records.slice().reverse().forEach(r => {
+        html += `<tr class="zebra-row">
+            <td>${r.date}</td>
+            <td>${r.detail}</td>
+            <td style="color:#10b981; font-weight:bold">${r.type === 'Income' ? 'Rs ' + r.amount : '-'}</td>
+            <td style="color:#ef4444; font-weight:bold">${r.type === 'Expense' ? 'Rs ' + r.amount : '-'}</td>
+            <td><button class="action-btn action-btn-delete" onclick="deleteCashBook(${r.id})">Del</button></td>
+        </tr>`;
+
+        if(r.type === 'Income') {
+            totalIncome += r.amount;
+            if(r.date === today) todayIncome += r.amount;
+        }
+        else totalExpense += r.amount;
+    });
+
+    document.getElementById('cashBookTableBody').innerHTML = html || '<tr><td colspan="5" class="text-center">No transactions</td></tr>';
+    document.getElementById('cbGrandTotalIncome').innerText = totalIncome;
+    document.getElementById('cbTodayIncome').innerText = todayIncome;
+    document.getElementById('cbTotalExpense').innerText = totalExpense;
+}
+
+function deleteCashBook(id) {
+    if(confirm("Delete this transaction?")) {
+        let records = JSON.parse(localStorage.getItem(CASHBOOK_KEY)) || [];
+        records = records.filter(r => r.id != id);
+        localStorage.setItem(CASHBOOK_KEY, JSON.stringify(records));
+        loadCashBook();
+        showToast("Transaction deleted", "error");
+    }
+}
+
+function calculateH() {
+    const udhaarL = parseInt(document.getElementById('h_udhaarL').value) || 0;
+    const paisyLeny = parseInt(document.getElementById('h_paisyLeny').value) || 0;
+    const abu = parseInt(document.getElementById('h_abu').value) || 0;
+    
+    let services = 0;
+    document.querySelectorAll('.h_svc').forEach(input => {
+        services += parseInt(input.value) || 0;
+    });
+    
+    const bankTotal = services - paisyLeny + abu;
+    const inHand = bankTotal - udhaarL;
+    
+    document.getElementById('h_bankTotal').innerText = bankTotal;
+    document.getElementById('h_inHand').innerText = inHand;
+}
+
+function saveLedger() {
+    const entry = {
+        id: Date.now(),
+        date: document.getElementById('h_date').value,
+        udhaarL: parseInt(document.getElementById('h_udhaarL').value) || 0,
+        udhaarD: parseInt(document.getElementById('h_paisyLeny').value) || 0,
+        abu: parseInt(document.getElementById('h_abu').value) || 0,
+        services: {},
+        bankTotal: 0,
+        inHand: 0
+    };
+    
+    document.querySelectorAll('.h_svc').forEach((input, index) => {
+        entry.services[`Service ${index + 1}`] = parseInt(input.value) || 0;
+    });
+    
+    const services = Object.values(entry.services).reduce((a, b) => a + b, 0);
+    entry.bankTotal = services - entry.udhaarD + entry.abu;
+    entry.inHand = entry.bankTotal - entry.udhaarL;
+    
+    let history = JSON.parse(localStorage.getItem(LEDGER_KEY)) || [];
+    history.push(entry);
+    localStorage.setItem(LEDGER_KEY, JSON.stringify(history));
+    
+    renderLedgerTable();
+    clearLedgerForm();
+    showToast('Ledger saved!', 'success');
+}
+
+function renderLedgerTable() {
+    let history = JSON.parse(localStorage.getItem(LEDGER_KEY)) || [];
+    let html = '';
+    
+    history.slice().reverse().forEach(item => {
+        html += `
+        <tr class="zebra-row" onclick="selectRow(this)">
+            <td>${item.date}</td>
+            <td>Rs ${item.bankTotal}</td>
+            <td>Rs ${item.udhaarL || 0}</td>
+            <td style="color:#10b981; font-weight:bold;">Rs ${item.inHand}</td>
+            <td>
+                <button class="action-btn action-btn-edit" onclick="event.stopPropagation(); editLedger(${item.id})">Edit</button>
+                <button class="action-btn action-btn-delete" onclick="event.stopPropagation(); deleteLedger(${item.id})">Del</button>
+            </td>
+        </tr>`;
+    });
+    
+    document.getElementById('ledgerHistoryBody').innerHTML = html || '<tr><td colspan="5" class="text-center">No records found.</td></tr>';
+}
+
+function editLedger(id) {
+    let history = JSON.parse(localStorage.getItem(LEDGER_KEY)) || [];
+    let item = history.find(x => x.id === id);
+    
+    if(item) {
+        switchTab('dukan');
+        document.getElementById('h_date').value = item.date;
+        document.getElementById('h_udhaarL').value = item.udhaarL;
+        document.getElementById('h_paisyLeny').value = item.udhaarD;
+        document.getElementById('h_abu').value = item.abu;
+        
+        const inputs = document.querySelectorAll('.h_svc');
+        Object.values(item.services).forEach((val, index) => {
+            if (inputs[index]) inputs[index].value = val;
+        });
+        
+        calculateH();
+        deleteLedger(id);
+        showToast("Edit mode enabled", "success");
+    }
+}
+
+function deleteLedger(id) {
+    if(confirm("Delete this ledger?")) {
+        let history = JSON.parse(localStorage.getItem(LEDGER_KEY)) || [];
+        history = history.filter(x => x.id !== id);
+        localStorage.setItem(LEDGER_KEY, JSON.stringify(history));
+        renderLedgerTable();
+        showToast("Ledger deleted", "error");
+    }
+}
+
+function clearLedgerForm() {
+    document.getElementById('h_date').valueAsDate = new Date();
+    document.getElementById('h_udhaarL').value = '';
+    document.getElementById('h_paisyLeny').value = '';
+    document.getElementById('h_abu').value = '';
+    document.querySelectorAll('.h_svc').forEach(i => i.value = '');
+    calculateH();
+}
+
+function calculateTotal() {
+    const bikeFee = parseFloat(document.getElementById('bikeSelect').value) || 0;
+    const exciseFee = 1000; // Always included
+    const lateFee = document.getElementById('lateFee') && document.getElementById('lateFee').checked ? 500 : 0;
+    const transferFee = document.getElementById('transferFee').checked ? 2000 : 0;
+    
+    const total = bikeFee + exciseFee + lateFee + transferFee;
+    document.getElementById('grandTotal').textContent = 'Rs. ' + total.toLocaleString();
+}
+
+function toggleCheckbox(id) {
+    const checkbox = document.getElementById(id);
+    checkbox.checked = !checkbox.checked;
+    calculateTotal();
+}
+
+function syncFromSheet() {
+    showLoader();
+    
+    fetch(SCRIPT_URL)
+    .then(res => res.json())
+    .then(data => {
+        if (!data || !Array.isArray(data)) {
+            hideLoader();
+            showToast('No data found in sheet', 'error');
+            return;
+        }
+
+        let vehicleRecords = [];
+        let loanRecords = [];
+        let abuRecords = [];
+
+        data.forEach(r => {
+            let sType = r.serviceType || "";
+            let displayDate = r.date || new Date().toLocaleDateString();
+
+            if (sType.includes("Loan")) {
+                loanRecords.push({
+                    id: r.id,
+                    date: displayDate,
+                    name: r.buyerName || "No Name",
+                    amount: r.total || 0,
+                    type: sType.includes("Given") ? "Given" : "Taken",
+                    detail: r.trackingId || ""
+                });
+            } else if (sType.includes("Abu Hisab")) {
+                abuRecords.push({
+                    id: r.id,
+                    date: displayDate,
+                    detail: r.trackingId || "",
+                    amt: r.total || 0,
+                    type: sType.includes("In") ? "In" : "Out"
+                });
+            } else {
+                vehicleRecords.push(r);
+            }
+        });
+
+        localStorage.setItem(KEY, JSON.stringify(vehicleRecords));
+        localStorage.setItem(LOAN_KEY, JSON.stringify(loanRecords));
+        localStorage.setItem(ABU_KEY, JSON.stringify(abuRecords));
+
+        renderTable();
+        renderLoanTable();
+        renderAbu();
+        updateStats();
+        
+        hideLoader();
+        showToast('Data synced successfully!', 'success');
+    })
+    .catch(e => {
+        hideLoader();
+        showToast('Sync failed. Check internet', 'error');
+    });
+}
+
+function showToast(message, type = 'success') {
+    const container = document.getElementById('toast-container');
+    const toast = document.createElement('div');
+    toast.className = `toast ${type === 'error' ? 'toast-error' : ''}`;
+    const icon = type === 'success' ? '✅' : '⚠️';
+    toast.innerHTML = `<span>${icon}</span><span>${message}</span>`;
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
+
+// ===== PIN PAD FUNCTIONS =====
+let currentPin = '';
+const overlay = document.getElementById('pin-overlay');
+const statusMsg = document.getElementById('status-msg');
+const CORRECT_PIN = "1234";
+
+function addDigit(digit) {
+    if (currentPin.length < 4) {
+        currentPin += digit;
+        updatePinDisplay();
+        
+        if (currentPin.length === 4) {
+            setTimeout(checkPin, 200);
+        }
+    }
+}
+
+function backspace() {
+    if (currentPin.length > 0) {
+        currentPin = currentPin.slice(0, -1);
+        updatePinDisplay();
+    }
+}
+
+function clearPin() {
+    currentPin = '';
+    updatePinDisplay();
+    statusMsg.innerText = 'Enter PIN to unlock';
+    statusMsg.style.color = 'white';
+}
+
+function updatePinDisplay() {
+    for (let i = 1; i <= 4; i++) {
+        const digit = document.getElementById(`digit-${i}`);
+        if (digit) {
+            if (i <= currentPin.length) {
+                digit.textContent = currentPin[i-1];
+                digit.classList.add('filled');
+            } else {
+                digit.textContent = '';
+                digit.classList.remove('filled');
+            }
+        }
+    }
+}
+
+function checkPin() {
+    if (currentPin === CORRECT_PIN) {
+        statusMsg.innerText = "✅ Access Granted! Unlocking...";
+        statusMsg.style.color = "#22c55e";
+        
+        setTimeout(() => {
+            overlay.style.opacity = '0';
+            setTimeout(() => {
+                overlay.style.display = 'none';
+            }, 500);
+        }, 500);
+    } else {
+        statusMsg.innerText = "❌ Wrong PIN! Try Again";
+        statusMsg.style.color = "#ef4444";
+        
+        setTimeout(() => {
+            clearPin();
+        }, 1500);
+    }
+}
+
+// Keyboard support for PIN
+document.addEventListener('keydown', (e) => {
+    if (overlay.style.display !== 'none') {
+        if (e.key >= '0' && e.key <= '9') {
+            addDigit(e.key);
+        } else if (e.key === 'Backspace') {
+            backspace();
+        } else if (e.key === 'Escape') {
+            clearPin();
+        }
+    }
+});
+
+// ===== IMAGE UPLOAD FUNCTIONS =====
+function handleImageUploadNew(input, hiddenId, boxNumber) {
+    encode(input, hiddenId); // Call existing encode function
+    
+    const file = input.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById(`preview${boxNumber}`).src = e.target.result;
+            document.getElementById(`uploadBox${boxNumber}`).classList.add('has-image');
+        };
+        reader.readAsDataURL(file);
+    }
+}
+
+function removeImageNew(hiddenId, boxNumber) {
+    document.getElementById(hiddenId).value = '';
+    document.getElementById(`preview${boxNumber}`).src = '';
+    document.getElementById(`uploadBox${boxNumber}`).classList.remove('has-image');
+    const input = document.querySelector(`#uploadBox${boxNumber} input[type="file"]`);
+    if (input) input.value = '';
+}
+
+// ===== VEHICLE TYPE RADIO SYNC =====
+function updateVCategory() {
+    const selected = document.querySelector('input[name="vCategory"]:checked').value;
+    document.getElementById('vCategory').value = selected;
+}
+
+
+window.onload = () => {
+    document.getElementById('h_date').valueAsDate = new Date();
+    renderTable();
+    renderLoanTable();
+    renderAbu();
+    renderLedgerTable();
+    loadCashBook();
+    updateStats();
+    toggleFields();
+    calculateTotal();
+    calculateH();
+    
+    // Register Service Worker for offline support
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('./service-worker.js')
+            .then(registration => {
+                console.log('Service Worker registered successfully:', registration);
+            })
+            .catch(error => {
+                console.log('Service Worker registration failed:', error);
+            });
+    }
+};
+
+// PWA Install Prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredPrompt = e;
+    showInstallPrompt();
+});
+
+function showInstallPrompt() {
+    const installDiv = document.createElement('div');
+    installDiv.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+        color: white;
+        padding: 16px 24px;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+        z-index: 10000;
+        max-width: 90%;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        animation: slideUp 0.3s ease-out;
+    `;
+    
+    installDiv.innerHTML = `
+        <div style="flex: 1;">
+            <div style="font-weight: 700; font-size: 15px; margin-bottom: 4px;">📱 Install App</div>
+            <div style="font-size: 12px; opacity: 0.9;">Add to home screen for offline access</div>
+        </div>
+        <button id="installBtn" style="
+            background: white;
+            color: #6366f1;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 13px;
+            cursor: pointer;
+        ">Install</button>
+        <button id="dismissBtn" style="
+            background: transparent;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        ">Later</button>
+    `;
+    
+    document.body.appendChild(installDiv);
+    
+    document.getElementById('installBtn').addEventListener('click', async () => {
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            if (outcome === 'accepted') {
+                showToast('App installed successfully! 🎉', 'success');
+            }
+            deferredPrompt = null;
+        }
+        installDiv.remove();
+    });
+    
+    document.getElementById('dismissBtn').addEventListener('click', () => {
+        installDiv.remove();
+    });
+}
+
+</script>
+
+</body>
+</html>
